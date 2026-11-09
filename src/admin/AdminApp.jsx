@@ -15,7 +15,9 @@ import {
 import PromotionalBadge, { SpecialOfferSticker } from '../components/common/PromotionalBadge'
 import { uploadToCloudinaryDirect, extractCloudinaryPublicId } from '../utils/cloudinary'
 
-const API_URL = '/api'
+const API_URL = (typeof window !== 'undefined' && window.location.hostname.includes('github.io'))
+  ? 'https://www.joshyphotography.co.uk/api'
+  : '/api'
 export { PHOTOGRAPHY_CATEGORIES }
 
 // Convert Google Drive sharing links to direct embed URLs
@@ -2201,8 +2203,11 @@ function PhotosEditor({ data, onSave, onDelete, saving, token, onReload, loading
   const handleSaveEdit = async () => {
     if (!editingPhoto) return
     const normCategory = normalizeCategoryKey(editingPhoto.category)
+    const newOrder = parseInt(editingPhoto.order, 10) || 1
     const normalized = {
       ...editingPhoto,
+      order: newOrder,
+      num: editingPhoto.num ? String(editingPhoto.num).trim() : String(newOrder).padStart(2, '0'),
       category: normCategory,
       categorySlug: normCategory,
       image: editingPhoto.src || editingPhoto.image,
@@ -2297,7 +2302,34 @@ function PhotosEditor({ data, onSave, onDelete, saving, token, onReload, loading
             <h2>Dynamic Photography Portfolio Management</h2>
             <p>Upload, organize, edit, and publish photographs across all 12 photography categories</p>
           </div>
-          <div style={{ display: 'flex', gap: '0.75rem' }}>
+          <div style={{ display: 'flex', gap: '0.75rem', flexWrap: 'wrap' }}>
+            <button
+              type="button"
+              className="admin-btn admin-btn--secondary"
+              title="Automatically assign sequential orders (1, 2, 3...) so photos don't share the same order number"
+              onClick={async () => {
+                const targetLabel = selectedCategory === 'all' ? 'All Categories' : getCategoryLabel(selectedCategory)
+                if (!window.confirm(`Auto-sequence orders (1, 2, 3...) for ${targetLabel}? This will ensure each photo has a unique sequential position.`)) return
+                const activeCat = selectedCategory
+                let catPhotos = activeCat === 'all' ? [...photos] : photos.filter(p => isCategoryMatch(p.category || p.categorySlug, activeCat))
+                catPhotos.sort((a, b) => (a.order || 0) - (b.order || 0))
+                const reorderedMap = new Map()
+                catPhotos.forEach((p, i) => {
+                  reorderedMap.set(p.id, i + 1)
+                })
+                const updated = photos.map(p => {
+                  if (reorderedMap.has(p.id)) {
+                    const ord = reorderedMap.get(p.id)
+                    return { ...p, order: ord, num: String(ord).padStart(2, '0') }
+                  }
+                  return p
+                })
+                setPhotos(updated)
+                await onSave(updated)
+              }}
+            >
+              🔢 Auto-Sequence Orders (1, 2, 3...)
+            </button>
             <button
               type="button"
               className="admin-btn admin-btn--primary"
@@ -2507,7 +2539,7 @@ function PhotosEditor({ data, onSave, onDelete, saving, token, onReload, loading
               <div className="admin-portfolio-card__body">
                 <div>
                   <span className="admin-portfolio-card__num">
-                    #{photo.num || String(idx + 1).padStart(2, '0')} · Order {photo.order || idx + 1}
+                    #{String(idx + 1).padStart(2, '0')} · Order {photo.order ?? (idx + 1)}
                   </span>
                   <h4 className="admin-portfolio-card__title">{photo.title || 'Untitled'}</h4>
                   <p className="admin-portfolio-card__desc">{photo.desc || 'No description provided.'}</p>
@@ -2613,12 +2645,28 @@ function PhotosEditor({ data, onSave, onDelete, saving, token, onReload, loading
                 </div>
 
                 <div className="admin-input-group">
-                  <label>Display Order</label>
+                  <label>Display Order (Priority)</label>
                   <input
                     type="number"
-                    value={editingPhoto.order || 1}
+                    value={editingPhoto.order ?? 1}
                     onChange={(e) => setEditingPhoto({ ...editingPhoto, order: parseInt(e.target.value, 10) || 1 })}
                   />
+                  <small style={{ color: 'var(--admin-accent)', fontSize: '0.75rem', display: 'block', marginTop: '0.35rem' }}>
+                    Lower numbers appear first on your website (e.g. 1 is first, 2 is second).
+                  </small>
+                </div>
+
+                <div className="admin-input-group">
+                  <label>Card Number (Gold Number: 01, 02...)</label>
+                  <input
+                    type="text"
+                    value={editingPhoto.num || ''}
+                    placeholder="e.g. 01"
+                    onChange={(e) => setEditingPhoto({ ...editingPhoto, num: e.target.value })}
+                  />
+                  <small style={{ color: 'var(--admin-accent)', fontSize: '0.75rem', display: 'block', marginTop: '0.35rem' }}>
+                    This is the big gold number (01, 02, 03...) shown on the website card.
+                  </small>
                 </div>
 
                 <div className="admin-input-group admin-input-group--full">

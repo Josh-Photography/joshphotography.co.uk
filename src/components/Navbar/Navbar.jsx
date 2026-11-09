@@ -144,7 +144,7 @@ export default function Navbar() {
           className="w-full max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-6 xl:px-10 flex items-center justify-between gap-2 lg:gap-3 xl:gap-5"
         >
           {/* Column 1: Logo & Studio Name (Left Aligned) */}
-          <div className="shrink-0 flex items-center">
+          <div className="shrink-0 flex items-center mr-3 lg:mr-4 xl:mr-8">
             <Link
               to="/"
               className="group flex items-center gap-2 sm:gap-2.5 xl:gap-3"
@@ -153,10 +153,10 @@ export default function Navbar() {
               <img
                 src={isLightMode ? lightLogo : darkLogo}
                 alt={studioName}
-                className="h-10 sm:h-12 lg:h-11 xl:h-14 w-auto object-contain transition-all duration-300 group-hover:scale-105 shrink-0"
+                className="h-9 sm:h-11 lg:h-10 xl:h-13 w-auto object-contain transition-all duration-300 group-hover:scale-105 shrink-0"
               />
               <span
-                className={`font-serif text-[13.5px] sm:text-base lg:text-[1.05rem] xl:text-[1.28rem] 2xl:text-[1.48rem] tracking-[0.05em] xl:tracking-[0.07em] uppercase whitespace-nowrap transition-colors duration-300 font-normal shrink-0 ${isLightMode
+                className={`font-serif text-[13px] sm:text-base lg:text-[0.95rem] xl:text-[1.2rem] 2xl:text-[1.4rem] tracking-[0.04em] xl:tracking-[0.06em] uppercase whitespace-nowrap transition-colors duration-300 font-normal shrink-0 ${isLightMode
                   ? 'text-charcoal'
                   : 'text-white drop-shadow-[0_2px_6px_rgba(0,0,0,0.8)]'
                   }`}
@@ -168,7 +168,7 @@ export default function Navbar() {
 
           {/* Column 2: Navigation Links (Centered with balanced spacing) */}
           <nav
-            className="hidden lg:flex items-center justify-center gap-0.5 lg:gap-1 xl:gap-2 2xl:gap-3 flex-1 min-w-0 mx-1 lg:mx-2 xl:mx-4"
+            className="hidden lg:flex items-center justify-center gap-0 lg:gap-0.5 xl:gap-1.5 2xl:gap-3 flex-1 min-w-0 mx-1 lg:mx-2 xl:mx-4"
             role="navigation"
             aria-label="Main navigation"
           >
@@ -176,10 +176,14 @@ export default function Navbar() {
               const hasChildren = Boolean(item.children && item.children.length > 0)
               const isOpen = activeDropdown === item.path
 
-              // Responsive label: on tighter desktop screens, shorten "Client Testimonials" to "Testimonials"
+              // Responsive label: on tighter desktop screens, abbreviate labels to prevent crowding
               const displayLabel = item.label === 'Client Testimonials' ? (
                 <span>
-                  <span className="hidden xl:inline">CLIENT </span>TESTIMONIALS
+                  <span className="hidden 2xl:inline">CLIENT </span>TESTIMONIALS
+                </span>
+              ) : item.label === 'Special Offers' ? (
+                <span>
+                  <span className="hidden xl:inline">SPECIAL </span>OFFERS
                 </span>
               ) : (
                 item.label
@@ -198,7 +202,7 @@ export default function Navbar() {
                       onClick={() => setActiveDropdown(null)}
                       aria-expanded={isOpen}
                       aria-haspopup="true"
-                      className={`px-1.5 py-1 lg:px-2 lg:py-1.5 xl:px-3 xl:py-2 font-nav text-[11px] lg:text-[11.5px] xl:text-[13px] 2xl:text-[13.5px] uppercase tracking-[0.05em] lg:tracking-[0.06em] xl:tracking-[0.1em] transition-all duration-300 flex items-center gap-1 cursor-pointer rounded-sm whitespace-nowrap ${isOpen || isActive(item.path)
+                      className={`px-1 lg:px-1.5 xl:px-2.5 2xl:px-3 py-1 lg:py-1.5 xl:py-2 font-nav text-[10.5px] lg:text-[11px] xl:text-[12.5px] 2xl:text-[13.5px] uppercase tracking-[0.04em] lg:tracking-[0.05em] xl:tracking-[0.08em] transition-all duration-300 flex items-center gap-1 cursor-pointer rounded-sm whitespace-nowrap ${isOpen || isActive(item.path)
                         ? isLightMode
                           ? 'text-gold font-bold'
                           : 'text-[#E5BA78] font-bold drop-shadow-[0_1px_3px_rgba(0,0,0,0.6)]'
@@ -216,7 +220,7 @@ export default function Navbar() {
                   ) : (
                     <Link
                       to={item.path}
-                      className={`px-1.5 py-1 lg:px-2 lg:py-1.5 xl:px-3 xl:py-2 font-nav text-[11px] lg:text-[11.5px] xl:text-[13px] 2xl:text-[13.5px] uppercase tracking-[0.05em] lg:tracking-[0.06em] xl:tracking-[0.1em] transition-all duration-300 flex items-center gap-1 rounded-sm whitespace-nowrap ${isActive(item.path)
+                      className={`px-1 lg:px-1.5 xl:px-2.5 2xl:px-3 py-1 lg:py-1.5 xl:py-2 font-nav text-[10.5px] lg:text-[11px] xl:text-[12.5px] 2xl:text-[13.5px] uppercase tracking-[0.04em] lg:tracking-[0.05em] xl:tracking-[0.08em] transition-all duration-300 flex items-center gap-1 rounded-sm whitespace-nowrap ${isActive(item.path)
                         ? isLightMode
                           ? 'text-gold font-bold'
                           : 'text-[#E5BA78] font-bold drop-shadow-[0_1px_3px_rgba(0,0,0,0.6)]'
@@ -263,10 +267,10 @@ export default function Navbar() {
           </nav>
 
           {/* Column 3: Check Availability Button (Right Aligned) */}
-          <div className="shrink-0 flex items-center justify-end gap-2 sm:gap-2.5 pr-2 sm:pr-0">
+          <div className="shrink-0 flex items-center justify-end gap-2 sm:gap-2.5 pr-2 sm:pr-0 ml-3 lg:ml-4 xl:ml-6">
             <Link
               to={ctaLink}
-              className={`hidden lg:inline-flex items-center justify-center whitespace-nowrap px-3 py-1.5 lg:px-3.5 lg:py-2 xl:px-5 xl:py-2.5 font-nav text-[11px] lg:text-[11.5px] xl:text-[12.5px] uppercase tracking-[0.08em] lg:tracking-[0.1em] xl:tracking-[0.14em] font-semibold transition-all duration-300 border shadow-sm rounded-sm shrink-0 ${isLightMode
+              className={`hidden lg:inline-flex items-center justify-center whitespace-nowrap px-2.5 py-1.5 lg:px-3 lg:py-1.5 xl:px-4 xl:py-2 font-nav text-[10.5px] lg:text-[11px] xl:text-[12px] uppercase tracking-[0.06em] lg:tracking-[0.08em] xl:tracking-[0.12em] font-semibold transition-all duration-300 border shadow-sm rounded-sm shrink-0 ${isLightMode
                 ? 'border-[#292522] text-[#292522] hover:bg-[#292522] hover:text-[#FAF6EE]'
                 : 'border-[#E5BA78] text-[#E5BA78] hover:bg-[#E5BA78] hover:text-[#1A1715] backdrop-blur-sm bg-black/25'
                 }`}

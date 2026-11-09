@@ -77,7 +77,7 @@ export default function CategoryTemplate({
     id: `${categoryId}-${c.id || i}`,
     src: c.image || c.src,
     srcLarge: c.srcLarge || c.image || c.src,
-    title: `${c.num || String(i + 1).padStart(2, '0')} — ${c.title}`,
+    title: `${String(i + 1).padStart(2, '0')} — ${c.title}`,
     alt: c.alt || c.title,
     event: c.desc || '',
   }))
@@ -255,8 +255,8 @@ export default function CategoryTemplate({
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-7 lg:gap-8">
               {categoryCards.map((card, idx) => (
                 <PhotographyCard
-                  key={card.num || idx}
-                  num={card.num}
+                  key={card.id || `${categoryId}-${idx}`}
+                  num={String(idx + 1).padStart(2, '0')}
                   title={card.title}
                   desc={card.desc}
                   image={card.image}

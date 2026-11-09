@@ -7,8 +7,10 @@ const STORAGE_KEY = 'josh_cms_data'
 const EVENT_NAME = 'josh_data_updated'
 
 // In browser, relative '/api' works seamlessly through Vite proxy or same-domain deployment.
-// If not reachable, fallback to localStorage & bundled defaults.
-const API_BASE = '/api'
+// When hosted statically on GitHub Pages, route API calls to the live Vercel backend.
+const API_BASE = (typeof window !== 'undefined' && window.location.hostname.includes('github.io'))
+  ? 'https://www.joshyphotography.co.uk/api'
+  : '/api'
 
 class DataService {
   constructor() {
@@ -234,7 +236,7 @@ class DataService {
 
     return matching.map((p, idx) => ({
       id: p.id || `photo-${idx}`,
-      num: p.num || String(idx + 1).padStart(2, '0'),
+      num: String(idx + 1).padStart(2, '0'),
       title: p.title || `Photograph ${idx + 1}`,
       desc: p.desc || '',
       image: p.image || p.src || '',
